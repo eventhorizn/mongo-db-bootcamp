@@ -1,0 +1,16 @@
+// Intro to MongoDB, Shop db
+
+use('shop');
+
+// The drop() command destroys all data from a collection.
+// Make sure you run it against proper database and collection.
+db.products.drop();
+
+db.products.insertOne(
+  {"_id" : 1, "name" : "A Book", "price" : 12.99}
+);
+
+db.products.insertMany(
+  [{"_id" : 2, "name" : "Way of Kings", "price" : 15.99},
+  {"_id" : 3, "name" : "Words of Radiance", "price" : 10.99}]
+);
