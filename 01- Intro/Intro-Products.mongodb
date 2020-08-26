@@ -14,3 +14,12 @@ db.products.insertMany(
   [{"_id" : 2, "name" : "Way of Kings", "price" : 15.99},
   {"_id" : 3, "name" : "Words of Radiance", "price" : 10.99}]
 );
+
+db.products.insertOne(
+  {"name" : "A T-shirt", "price" : 25.00, "description" : "High quality t-shrit"}
+)
+
+db.products.insertOne(
+  {"name" : "A Computer", "price" : 1025.00, "description" : "High quality computer", 
+   "details" : {"cpu" : "Intel i7 8770", "memory" : 32}}
+)
