@@ -1,0 +1,86 @@
+// show current databases on server you're connected to
+// more of a shell command
+//show dbs;
+
+// switch to non-existant db
+use('flights');
+
+// won't show up, since doesn't exist yet
+// once we store data, it will be created
+//show dbs;
+
+db.flightData.drop();
+
+db.flightData.insertOne(
+    {
+    "departureAirport": "MUC",
+    "arrivalAirport": "SFO",
+    "aircraft": "Airbus A380",
+    "distance": 12000,
+    "intercontinental": true
+    }
+);
+
+// shows all data in the database
+db.flightData.find();
+
+// usually a valid json file requries keys to be strings
+// mongoDB uses bson, so it will accept below:
+db.flightData.insertOne(
+    {departureAirport: "TXL", arrivalAirport: "LHR"}
+);
+
+db.flightData.find();
+
+// don't need to use the auto generated id, it just needs to be unique
+db.flightData.insertOne(
+    {departureAirport: "TXL", arrivalAirport: "LHR", _id: "txl-lhr-1"}
+);
+
+db.flightData.find();
+
+// Delete with filter
+db.flightData.deleteOne({departureAirport: "TXL"});
+
+db.flightData.find();
+
+//db.flightData.deleteOne({_id: "txl-lhr-1"});
+
+//update the data so they share
+//need to include the $set
+db.flightData.updateOne({distance: 12000}, {$set: {marker: "delete"}})
+
+//update all
+db.flightData.updateMany({}, {$set: {marker: "toDelete"}})
+
+db.flightData.find();
+
+//could also deleteMany({})
+db.flightData.deleteMany({marker: "toDelete"});
+
+db.flightData.insertMany(
+    [
+        {
+            "departureAirport": "MUC",
+            "arrivalAirport": "SFO",
+            "aircraft": "Airbus A380",
+            "distance": 12000,
+            "intercontinental": true
+        },
+        {
+            "departureAirport": "LHR",
+            "arrivalAirport": "TXL",
+            "aircraft": "Airbus A320",
+            "distance": 950,
+            "intercontinental": false
+        }
+    ]
+);
+
+db.flightData.find({intercontinental: true});
+
+//$gt mongo db function for greater than
+db.flightData.find({distance: {$gt: 10000}});
+db.flightData.find({distance: {$gt: 900}});
+
+db.flightData.findOne({distance: {$gt: 900}});
