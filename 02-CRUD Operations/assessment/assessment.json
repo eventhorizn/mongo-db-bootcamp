@@ -1,0 +1,35 @@
+[
+    {
+        "firstName": "Gary",
+        "lastName": "Hake",
+        "age": 31,
+        "history": [
+            {
+                "disease": "cold",
+                "treatment": "rest"
+            }
+        ]
+    },
+    {
+        "firstName": "Katie",
+        "lastName": "Hake",
+        "age": 30,
+        "history": [
+            {
+                "disease": "pregnant",
+                "treatment": "delivery"
+            }
+        ]
+    },
+    {
+        "firstName": "Rowan",
+        "lastName": "Hake",
+        "age": 1,
+        "history": [
+            {
+                "disease": "cold",
+                "treatment": "diaper change"
+            }
+        ]
+    }
+]
