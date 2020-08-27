@@ -1,0 +1,111 @@
+use('flights');
+
+// we don't have to declare new documents, just add to it
+db.passengers.insertMany(
+    [
+        {
+            "name": "Max Schwarzmueller",
+            "age": 29
+        },
+        {
+            "name": "Manu Lorenz",
+            "age": 30
+        },
+        {
+            "name": "Chris Hayton",
+            "age": 35
+        },
+        {
+            "name": "Sandeep Kumar",
+            "age": 28
+        },
+        {
+            "name": "Maria Jones",
+            "age": 30
+        },
+        {
+            "name": "Alexandra Maier",
+            "age": 27
+        },
+        {
+            "name": "Dr. Phil Evans",
+            "age": 47
+        },
+        {
+            "name": "Sandra Brugge",
+            "age": 33
+        },
+        {
+            "name": "Elisabeth Mayr",
+            "age": 29
+        },
+        {
+            "name": "Frank Cube",
+            "age": 41
+        },
+        {
+            "name": "Karandeep Alun",
+            "age": 48
+        },
+        {
+            "name": "Michaela Drayer",
+            "age": 39
+        },
+        {
+            "name": "Bernd Hoftstadt",
+            "age": 22
+        },
+        {
+            "name": "Scott Tolib",
+            "age": 44
+        },
+        {
+            "name": "Freddy Melver",
+            "age": 41
+        },
+        {
+            "name": "Alexis Bohed",
+            "age": 35
+        },
+        {
+            "name": "Melanie Palace",
+            "age": 27
+        },
+        {
+            "name": "Armin Glutch",
+            "age": 35
+        },
+        {
+            "name": "Klaus Arber",
+            "age": 53
+        },
+        {
+            "name": "Albert Twostone",
+            "age": 68
+        },
+        {
+            "name": "Gordon Black",
+            "age": 38
+        }
+    ]
+);
+
+// gives you back a cursor, and not all the data
+// doesn't give an array of the documents
+// collection could be very big
+// gives first 20 and stops
+db.passengers.find();
+
+// exhausts the cursor
+db.passengers.find().toArray();
+
+// in app code you'd use something like:
+db.passengers.find().forEach((passengerData) => {printjson(passengerData)})
+
+// projection
+// filters data before it's shipped back to app over the wire
+// id is always included by default
+db.passengers.find({}, {name: 1})
+
+// exclude id
+db.passengers.find({}, {name: 1, _id: 0})

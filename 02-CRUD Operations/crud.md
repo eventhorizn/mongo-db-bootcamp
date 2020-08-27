@@ -44,3 +44,26 @@ No matter how you interface w/ MongoDB, you'll need to interact through CRUD ope
 
 1. Some levels (analysis) it's just reading data
 1. Others (admin), it's all
+1. On read, mongoDB uses a cursor (due to the danger of returning lots of data)
+    - Doesn't return an array by default
+
+Look to the .mongodb file in the folder for more info
+
+## Projection
+
+Take a data set from the database
+
+An application may only need some of that data
+- You can pull everything and filter on the app side
+- But it's better to do that on the db side
+
+## Embedded Documents and Arrays
+
+1. Core feature of mongoDB
+1. You can have a field in your document, that's also a document
+    - It's turtles all the way down
+1. Up to 100 levels of nesting
+1. Overall document size max is 16mb
+1. Can also store arrays in a document
+    - Can store any data
+    - List of data

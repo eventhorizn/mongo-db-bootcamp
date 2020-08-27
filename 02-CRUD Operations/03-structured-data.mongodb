@@ -1,0 +1,30 @@
+db.flightData.find();
+
+//embedded document
+db.flightData.updateMany({}, {$set: {status: {description: "on-time", lastUpdated: "1 hour ago"}}});
+
+db.flightData.find();
+
+db.flightData.updateMany({}, {$set: {status: {description: "on-time", lastUpdated: "1 hour ago", details: {responsible: 'Gary Hake'}}}});
+
+db.flightData.find();
+
+// Arrays
+db.passengers.find();
+
+db.passengers.updateOne({name: "Albert Twostone"}, {$set: {hobbies: ["sports", "cooking"]}});
+
+db.passengers.find();
+
+// how to find this data
+db.passengers.findOne({name: "Albert Twostone"}).hobbies;
+
+// can ask for nested data directly
+db.passengers.find({hobbies: "sports"});
+
+db.flightData.find();
+
+// how do find objects
+db.flightData.find({"status.description": "on-time"});
+
+db.flightData.find({"status.details.responsible": "Gary Hake"});

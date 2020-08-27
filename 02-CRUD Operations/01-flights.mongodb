@@ -1,16 +1,12 @@
-// show current databases on server you're connected to
-// more of a shell command
-//show dbs;
-
 // switch to non-existant db
+// CREATE
 use('flights');
-
-// won't show up, since doesn't exist yet
-// once we store data, it will be created
-//show dbs;
 
 db.flightData.drop();
 
+
+
+// INSERT and CREATE
 db.flightData.insertOne(
     {
     "departureAirport": "MUC",
@@ -39,13 +35,19 @@ db.flightData.insertOne(
 
 db.flightData.find();
 
+
+
+// DELETE
 // Delete with filter
 db.flightData.deleteOne({departureAirport: "TXL"});
 
 db.flightData.find();
 
-//db.flightData.deleteOne({_id: "txl-lhr-1"});
+db.flightData.deleteOne({_id: "txl-lhr-1"});
 
+
+
+// UPDATE
 //update the data so they share
 //need to include the $set
 db.flightData.updateOne({distance: 12000}, {$set: {marker: "delete"}})
@@ -77,6 +79,9 @@ db.flightData.insertMany(
     ]
 );
 
+
+
+// READ
 db.flightData.find({intercontinental: true});
 
 //$gt mongo db function for greater than
@@ -84,3 +89,28 @@ db.flightData.find({distance: {$gt: 10000}});
 db.flightData.find({distance: {$gt: 900}});
 
 db.flightData.findOne({distance: {$gt: 900}});
+
+
+
+// More on UPDATE
+db.flightData.updateOne({departureAirport: "MUC"}, {$set: {delayed: true}});
+db.flightData.find();
+
+db.flightData.updateOne({departureAirport: "MUC"}, {$set: {delayed: false}});
+db.flightData.find();
+
+// difference b/t updateOne, updateMany and update
+// this actually updates the whole object to delayed: false
+// removes the existing data
+//db.flightData.update({departureAirport: "MUC"}, {delayed: false});
+//db.flightData.find();
+
+// a better way:
+db.flightData.replaceOne({departureAirport: "MUC"}, {
+    "departureAirport": "MUC",
+    "arrivalAirport": "SFO",
+    "aircraft": "Airbus A380",
+    "distance": 12000,
+    "intercontinental": true
+  });
+db.flightData.find();
