@@ -1,0 +1,17 @@
+use("companyData")
+
+db.companies.insertOne(
+    {
+        name: "Fresh Apples Inc", 
+        isStartup: true,
+        employees: 33, 
+        funding: 1345678901234567890, 
+        details: 
+            {
+                ceo: "Gary Hake"
+            },
+            tags: [{title: "super"}, {title: "perfect"}],
+            foundingDate: new Date(),
+            insertedAt: new Timestamp()
+    }
+);

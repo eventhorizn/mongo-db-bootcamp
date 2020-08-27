@@ -1,0 +1,38 @@
+use("shop")
+
+db.products.drop();
+
+db.products.insertOne({name: "A book", price: 12.99});
+
+db.products.insertOne({title: "T-Shirt", seller: {name: "Gary", age:29}})
+
+// notice how the products aren't similar at all, 
+// but are in the same collection
+db.products.find();
+
+// starting over
+db.products.deleteMany({});
+
+// Schema approches, 2 realistic
+
+// First approach 'SQL approach'
+db.products.insertOne({name: "A book", price: 12.99});
+db.products.insertOne({name: "A T-Shirt", price: 20.99});
+
+db.prodcuts.find();
+
+db.products.deleteMany({});
+
+// Second approach 'Mixed Approach'
+db.products.insertOne({name: "A book", price: 12.99});
+db.products.insertOne({name: "A T-Shirt", price: 20.99});
+db.products.insertOne({name: "A Computer", price: 1299, details: {cpu: "Intel i7 8770"}});
+db.products.find();
+
+db.products.deleteMany({});
+
+// Hybrid approach, but really SQL approach
+db.products.insertOne({name: "A book", price: 12.99, details: null});
+db.products.insertOne({name: "A T-Shirt", price: 20.99, details: null});
+db.products.insertOne({name: "A Computer", price: 1299, details: {cpu: "Intel i7 8770"}});
+db.products.find();
