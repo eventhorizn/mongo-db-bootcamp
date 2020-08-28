@@ -1,5 +1,7 @@
 use("companyData")
 
+db.companies.drop();
+
 db.companies.insertOne(
     {
         name: "Fresh Apples Inc", 
@@ -15,3 +17,11 @@ db.companies.insertOne(
             insertedAt: new Timestamp()
     }
 );
+
+db.companies.findOne();
+
+// the funding number is get off, it was too big
+
+db.numbers.insertOne({a: 1});
+
+db.numbers.findOne();

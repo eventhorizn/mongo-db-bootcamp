@@ -1,0 +1,16 @@
+// This is an example 'project'
+use('blog');
+
+db.users.drop();
+
+db.users.insertMany([{_id: 1, name: "Gary", age: 31, email: "test@test.com"},
+        {_id: 2, name: "Katie Hake", age: 30, email: "test@test.com"}]);
+
+db.posts.drop();
+
+db.posts.insertOne({title: "My first Post", text: "This is my first post",
+        tags: ["new", "text"], creator: 1, comments: [{text: "I like this post", author: 2}]})
+
+db.posts.findOne();
+
+

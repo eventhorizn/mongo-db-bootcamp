@@ -15,6 +15,9 @@ MongoDB does not enforce schemas, but does that mean you shouldn't use them?
 
 ## Data Types
 
+- [MongoDB BSON Types](https://docs.mongodb.com/manual/reference/bson-types/index.html)
+- [MongoDB Type Limits](https://docs.mongodb.com/manual/reference/limits/)
+
 1. Text: "Gary"
     - 16mb limit for text length
 1. Boolean: true or false
@@ -34,3 +37,46 @@ MongoDB does not enforce schemas, but does that mean you shouldn't use them?
     - 100 layers deep
 1. Array
     - List of objects
+
+## Modelling Schemas - How-to
+
+1. Which data does my app need or generate?
+    - User Info, Product Info, Orders
+    - This will define the fields you'll need and how they related
+1. Where do I need my Data?
+    - Welcome Page, Products, List Page, Orders Page
+    - Defines your req collections and field groupings
+        - products collection, etc
+1. Which kind of data or info do I want to display
+    - Weclome Page: Product Names
+    - Defines which queries you'll need
+    - Don't want complex joins
+1. How often do I fetch my data?
+    - Every page reload?
+    - Dteremes whether you should optimize for easy fetching
+1. How often do I write or change my data?
+    - Ordres => Often
+    - Product Data => Rarely
+    - Defines whether you should optimize for easy writing
+    
+## Relations
+
+When you have multiple Collections that relate to each other in some way
+
+1. Nested/Embedded Documents
+    - Customer with embedded Address
+1. References
+    - You don't want duplicate data
+    - Instead of embedding, include list of ids that match with another document in a different collection
+
+## Schema Validation
+
+1. We have a CRUD operation on a Collection
+    - Then the schema will validate the incoming data based on schema we defined
+    - Mongo will accept or deny if it passes
+1. Can define a schema, the level and the action
+    - Which documents get validated, what happens when it fails
+    - How strict (warning vs error)
+1. Note, the playground in VS Code doesn't seem to have this functionality yet
+    - Use shell if you want to set it
+    - I hope there's some gui eventually for this type of thing

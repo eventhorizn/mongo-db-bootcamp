@@ -1,0 +1,62 @@
+// We are copying the work from the Example Blog
+use('blog');
+
+db.users.drop();
+
+db.users.insertMany([{_id: 1, name: "Gary", age: 31, email: "test@test.com"},
+        {_id: 2, name: "Katie Hake", age: 30, email: "test@test.com"}]);
+
+db.posts.drop();
+
+db.posts.insertOne({title: "My first Post", text: "This is my first post",
+        tags: ["new", "text"], creator: 1, comments: [{text: "I like this post", author: 2}]})
+
+db.posts.findOne();
+
+// So above is implicit creation, lets do an explicit creation
+db.posts.drop();
+
+// We are gonna pass this into a js file for formatting
+// This isn't a function on the playground just yet, but seems to work on the shell...
+db.createCollection("posts",
+    {
+        validator:{ 
+            $jsonSchema: { 
+                bsonType: "object", 
+                required: ["title", "text", "creator", "comments"], 
+                properties: {
+                    title: {
+                        bsonType: "string",
+                        description: "must be a string and is required"
+                    },
+                    text: {
+                        bsonType: "string",
+                        description: "must be a string and is required"
+                    },
+                    creator: {
+                        bsonType: "objectId",
+                        description: "must be an objectId and is required"
+                    },
+                    comments: {
+                        bsonType: "array",
+                        description: "must be an array and is required",
+                        items: {
+                            bsonType: "object",
+                            required: ["text", "author"],
+                            properties: {
+                                text: {
+                                    bsonType: "string",
+                                    description: "must be a string and is required"
+                                },
+                                author: {
+                                    bsonType: "objcectId",
+                                    description: "must be an object id and is required"
+                                }
+                            }
+                        }
+                    }
+                }
+            } 
+        }
+    });
+

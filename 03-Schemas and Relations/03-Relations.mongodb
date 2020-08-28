@@ -1,0 +1,183 @@
+// One to One Relations
+// Patient <--> Disease Summary
+use("hospital")
+
+db.patients.drop();
+db.diseaseSummaries.drop();
+
+db.patients.insertOne({name: "Gary", age: 29, diseaseSummary: "summary-gary-1"});
+db.patients.findOne();
+
+db.diseaseSummaries.insertOne({_id: "summary-gary-1", diseases: ["cold", "broken finger"]});
+db.diseaseSummaries.findOne();
+
+db.patients.findOne({name: "Gary"}).diseaseSummary;
+
+// One way to do it, run together
+var dsid = db.patients.findOne({name: "Gary"}).diseaseSummary;
+db.diseaseSummaries.findOne({_id: dsid});
+
+// Clean up
+db.patients.deleteOne({});
+
+// Embedded Document
+db.patients.insertOne({name: "Gary", age: 31, diseaseSummary: {diseases: ["cold", "broken finger"]}});
+db.patients.findOne();
+
+// A better example to use separate collections
+// Person <--> Car
+use("carData")
+
+db.persons.drop();
+db.cars.drop();
+
+// Embedded example
+db.persons.insertOne({name: "Gary", car: {model: "bmw", price: 40000}});
+db.persons.findOne();
+
+// So maybe our use case is more analytical
+// We'd want to analyze both people and cars, but not really about the relations
+// Application reason to split the collections up
+
+// Cleanup
+db.persons.deleteMany({});
+
+db.persons.insertOne({name: "Gary", age: 31, salary: 3000});
+
+// We have a link (name), but I think ids are better
+db.cars.insertOne({model: "bmw", price: 40000, owner: "Gary"});
+
+
+// One to Many
+// Embedded example
+// Thread <--> Answers
+use("support");
+
+db.questionThreads.drop();
+db.answers.drop();
+
+db.questionThreads.insertOne({creator: "Gary", question: "How does that all work?",
+            answers: ["q1a1", "q1a2"]});
+db.questionThreads.findOne();
+
+db.answers.insertMany([{_id: "q1a1", text: "It works like that"}, {_id: "q1a2", text: "Thanks!"}]);
+db.answers.find();
+
+// One way to do it, run together
+var qid = db.questionThreads.findOne({creator: "Gary"}).answers[0];
+db.answers.findOne({_id: qid});
+
+// Embedded example
+
+// Cleanup
+db.questionThreads.deleteMany({});
+
+// This is usually the better way for qa
+db.questionThreads.insertOne({creator: "Gary", question: "How does that work?",
+        ansers: [{text: "Like That"}, {text: "Thanks"}]})
+db.questionThreads.findOne();
+
+
+// One to Many 
+// Reference Example
+// City <--> Citizens
+// One city has many citizen, one citizen belongs to one city
+// Separating makes sense
+//    Maybe you want all cities and don't want any citizens (New York for ex)
+use("cityData")
+
+db.cities.drop();
+
+db.cities.insertOne({_id: 1, name: "New York City", coordinates: {lat: 21, lng: 55}});
+db.cities.findOne();
+
+db.citizens.drop();
+
+
+// Don't hit document limits or bring back all citizens when getting a city
+db.citizens.insertMany([{name: "Gary Hake", cityId: 1}, {name: "Katie Hake", cityId: 1}])
+db.citizens.find();
+
+
+// Many to Many
+// Embedded Example
+// Customers <--> Products
+// One customer has many products, a product belongs to many customers
+// Often model many to many w/ refrences
+use("shop")
+
+db.products.drop();
+
+db.products.insertOne({_id: 1, title: "A Book", price: 12.99});
+
+db.customers.drop();
+
+db.customers.insertOne({_id: 1, name: "Gary", age: 31});
+
+db.orders.drop();
+
+db.orders.insertOne({productId: 1, customerId: 1});
+
+// We can make it work w/ 2 tables in MongoDB
+
+// Cleanup
+db.orders.drop();
+
+// Update customer
+db.customers.updateOne({}, {$set: {orders: [{productId: 1, quantity: 2}]}});
+db.customers.findOne();
+
+
+// Embedded alternative
+// Disadvantage is data duplication
+// Once order is placed, you don't update order (i.e price changed)
+db.customers.updateOne({}, {$set: {orders: [{title: "A Book", price: 12.99, quantity: 2}]}});
+db.customers.findOne();
+
+
+// Many to Many
+// Reference Example
+// Books <--> Authors
+// One book has many authors, an author has many books
+use("bookRegistry");
+
+db.books.drop();
+
+db.books.insertOne({name: "My fave book", authors: [{name: "Gary Hake", age: 31}, {name: "Katie Hake", age: 29}]});
+db.books.find();
+
+db.authors.drop();
+
+db.authors.insertMany([{_id: 1, name: "Gary Hake", age: 31, address: {street: "main"}}, 
+        {_id: 2, name: "Katie Hake", age: 29, address: {street: "Main"}}]);
+db.authors.find();
+
+// If data changes, it needs to change everywhere, so embedded isn't great
+// We'd have to merge manually, but change in one place, flows through
+db.books.updateOne({}, {/**
+ * field: The field name
+ * expression: The expression.
+ */
+$set: {
+  field: expression
+}: {authors: [1, 2]}});
+db.books.find();
+
+
+// Using lookUp() for Merging Reference Relations
+db.books.aggregate([{/**
+ * from: The target collection.
+ * localField: The local join field.
+ * foreignField: The target join field.
+ * as: The name for the results.
+ * pipeline: The pipeline to run on the joined collection.
+ * let: Optional variables to use in the pipeline field stages.
+ */
+$lookup: {
+  from: 'authors',
+  localField: 'authors',
+  foreignField: '_id',
+  as: 'creators'
+}}]);
+
+
