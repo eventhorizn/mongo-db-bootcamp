@@ -71,6 +71,8 @@ When you have multiple Collections that relate to each other in some way
 
 ## Schema Validation
 
+[Schema Validation Documentation](https://docs.mongodb.com/manual/core/schema-validation/)
+
 1. We have a CRUD operation on a Collection
     - Then the schema will validate the incoming data based on schema we defined
     - Mongo will accept or deny if it passes
