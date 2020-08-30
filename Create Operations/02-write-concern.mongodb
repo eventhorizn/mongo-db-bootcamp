@@ -1,0 +1,29 @@
+// Make sure to run persons writes on previous file
+
+// Write Concern
+// Much Faster, doesn't wait to insert memory
+db.persons.insertOne(
+    {name: "Chrissy", age: 41},
+    {writeConcern: {w: 0}});
+db.persons.find();
+
+// Slower, waits to write to disk
+db.persons.insertOne(
+    {name: "Alex", age: 36},
+    {writeConcern: {w: 1}});
+db.persons.find();
+
+// Journal
+// Higher security, we know the write to disk will happen
+db.persons.insertOne(
+    {name: "Chrissy", age: 41},
+    {writeConcern: {w: 1, j: true}});
+db.persons.find();
+
+// Speed matters, or connection is shaky
+db.persons.insertOne(
+    {name: "Aliya", age: 51},
+    {writeConcern: {w: 1, j: true, wtimeout: 200}});
+db.persons.find();
+
+

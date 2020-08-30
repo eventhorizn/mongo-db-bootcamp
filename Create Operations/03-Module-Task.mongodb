@@ -1,0 +1,47 @@
+// 1. Insert multiple companies (company data of your choice)
+//    into a collection with insertOne and insertMany
+use('insertTask');
+
+db.companies.drop();
+
+db.companies.insertOne({_id: 1, name: "Google", address: {street: "123 Main", city: "San Fran"}, netWorth: 12000000});
+
+db.companies.insertMany([
+    {_id: 2, name: "Amazon", address: {street: "123 Maricopa", city: "San Fran"}, netWorth: 12000000},
+    {_id: 3, name: "Microsoft", address: {street: "123 Market", city: "Louisville"}, netWorth: 14000000}]);
+
+db.companies.find();
+
+// 2. Deliberatly insert duplicate Id data and 'fix' failing 
+//    additions with unordered inserts
+
+// This insert should insert id 4, but fail on 2, and not insert 5
+db.companies.insertMany([
+    {_id: 4, name: "MongoDB", address: {street: "123 Fair", city: "Chicago"}, netWorth: 12000000},
+    {_id: 2, name: "Amazon", address: {street: "123 Maricopa", city: "San Fran"}, netWorth: 12000000},
+    {_id: 5, name: "Waystar", address: {street: "123 1st", city: "Bloomington"}, netWorth: 14000000}]);
+db.companies.find();
+
+// This insert should try all in the list, fail on the first 2, insert the last one
+db.companies.insertMany([
+    {_id: 4, name: "MongoDB", address: {street: "123 Fair", city: "Chicago"}, netWorth: 12000000},
+    {_id: 2, name: "Amazon", address: {street: "123 Maricopa", city: "San Fran"}, netWorth: 12000000},
+    {_id: 5, name: "Waystar", address: {street: "123 1st", city: "Bloomington"}, netWorth: 14000000}],
+    {ordered: false});
+db.companies.find();
+
+// 3. Write data for a new company w/ both journaling being 
+//    guaranteed and not being guaranteed
+// not guaranteed
+db.companies.insertOne(
+    {_id: 6, name: "Gatorade", address: {street: "123 Jarbo", city: "Los Angeles"}, netWorth: 12000000},
+    {W: 1, j: false});
+db.companies.find();
+
+// guaranteed
+db.companies.insertOne(
+    {_id: 7, name: "Simply Almond", address: {street: "123 Frankfort", city: "Springfield"}, netWorth: 12000000},
+    {W: 1, j: true});
+db.companies.find();
+
+

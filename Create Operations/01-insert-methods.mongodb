@@ -1,0 +1,57 @@
+use("contactData";
+
+db.persons.drop();
+
+// Regular insert methods
+
+db.persons.insertOne({name: "Gary", age: 31, hobbies: ["Sports", "Cooking"]});
+db.persons.insertOne({name: "Katie", age: 31, hobbies: ["Cars", "Cooking"]});
+
+
+db.persons.insertMany([
+    {name: "Ana", age: 29, hobbies: ["Sports", "Yoga"]}, 
+    {name: "Joe", age: 31, hobbies: ["Sports", "Cooking"]}]);
+
+
+// insert method can still be used
+// can insert one or many
+db.persons.insert({name: "Phil", age: 35});
+db.persons.insert([
+    {name: "Sandeep", age: 28}, 
+    {name: "Hans", age: 38}]);
+
+
+db.hobbies.drop();
+
+db.hobbies.insertMany([
+    {_id: "sports", name: "Sports"}, 
+    {_id: "cooking", name: "Cooking"}, 
+    {_id: "cars", name: "Cars"}]);
+db.hobbies.find();
+
+// Lets add more w/ id that already exists
+// Gives you duplicate key error
+// It inserts until it hits the problem document
+// yoga gets inserted
+// Called 'Ordered Insert'
+db.hobbies.insertMany([
+    {_id: "yoga", name: "Sports"}, 
+    {_id: "cooking", name: "Cooking"}, 
+    {_id: "hiking", name: "Hiking"}]);
+// yoga is in the db
+db.hobbies.find();
+
+
+// How can we change the 'Ordered Insert' behavior
+// Now it will try everything even if previous falis
+// It will never roll back an entire insert
+db.hobbies.insertMany([
+    {_id: "yoga", name: "Sports"}, 
+    {_id: "cooking", name: "Cooking"}, 
+    {_id: "hiking", name: "Hiking"}], {ordered: false});
+// Now hiking is in the db
+db.hobbies.find();
+
+
+
+
