@@ -1,0 +1,35 @@
+// Read Operations
+// Requires Movie data we imported in module 06
+
+// Can pass a filter (first matching)
+db.movies.findOne();
+
+
+// This will pass back a cursor and the first 20
+// So that we don't get all values back
+db.movies.find();
+
+// Filters
+// Work the same in findOne and find
+db.movies.find({name: "The Last Ship"});
+
+// We'll get more now
+db.movies.find({runtime: 60});
+
+
+
+// Comparison Operators
+
+// Not Equal
+db.movies.find({runtime: {$ne: 60}});
+
+// Lower Than (Not Equal)
+db.movies.find({runtime: {$lt: 40}});
+
+// Greater Than (Not Equal)
+db.movies.find({runtime: {$gt: 40}});
+
+// Lower Than Equal
+db.movies.find({runtime: {$lte: 42}});
+
+
