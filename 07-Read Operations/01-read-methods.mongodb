@@ -33,3 +33,155 @@ db.movies.find({runtime: {$gt: 40}});
 db.movies.find({runtime: {$lte: 42}});
 
 
+
+// Querying Embedded Documents & Arrays
+// Find all movies where rating > 7
+// Embedded Document Query
+db.movies.find({"rating.average": {$gt: 7}});
+
+// Array Query
+// Genres
+// There is Drama in the array, may be more
+db.movies.find({genres: "Drama"});
+
+// Only Drama, array equality
+db.movies.find({genres: ["Drama"]});
+
+
+
+
+// Understanding $in and $nin
+// If there are 2 or more discreet values you are looking for
+db.movies.find({runtime: {$in: [30, 42]}});
+
+// nin
+db.movies.find({runtime: {$nin: [30, 42]}});
+
+
+
+
+// Logical Operators
+
+// $or and $nor
+// find all documents where rating is lower than 5 or greater than 9
+db.movies.find({"rating.average": {$lt: 5}});
+
+db.movies.find({"rating.average": {$gt: 9.3}});
+
+// Combine the 2
+db.movies.find({$or: [
+    {"rating.average": {$lt: 5}}, 
+    {"rating.average": {$gt: 9.3}}]}).count();
+
+// $nor (neither of 2 conditions are met)
+db.movies.find({$nor: [
+    {"rating.average": {$lt: 5}}, 
+    {"rating.average": {$gt: 9.3}}]}).count();
+
+
+
+
+// $and
+// old syntax
+db.movies.find({$and: [
+    {"rating.average": {$gt: 9}}, 
+    {genres: "Drama"}]});
+
+
+// new syntax
+// By default, MongoDB 'ands' all the items you put in there
+db.movies.find({"rating.average": {$gt: 9}, genres: "Drama"});
+
+// Why does $and exist?
+// This doesn't work for all drivers
+db.movies.find({genres: "Drama", genres: "Horror"}).count();
+// In some genres, the above is the same as:
+// Second one gets overidden
+db.movies.find({genres: "Horror"}).count();
+
+db.movies.find({$and: [{genres: "Drama"}, {genres: "Horror"}]}).count();
+
+
+
+// $not: Inverts effect of query expression
+db.movies.find({runtime: {$not: {$eq: 60}}}).count();
+
+// Same query
+// Sometimes you need an inverse of a complex query
+db.movies.find({runtime: {$ne: 60}}).count();
+
+
+
+
+// Element Operators
+// $exist & &type
+use("user")
+
+db.users.drop();
+
+db.users.insertMany([
+    {name: "Gary", hobbies: [
+        {title: "Sports", frequency: 3}, 
+        {title: "Cooking", frequency: 6}], 
+    phone: 131782737},
+    {name: "Katie", hobbies: [
+        {title: "Cars", frequency: 2}],
+    phone: "012177972", age: 30}]);
+db.users.find();
+
+
+// Find all persons who have an age field
+db.users.find({age: {$exists: true, $gte: 30}});
+
+db.users.insertOne({name: "Anna", hobbies: [
+    {title: "Sports", frequency: 2}, 
+    {title: "Yoga", frequency: 3}], 
+    phone: "80811888258", age: null});
+
+// This finds Anna, because it does exist 
+db.users.find({age: {$exists: true, $gte: 30}});
+
+// What if we want to find all w/ a valid field?
+db.users.find({age: {$exists: true, $ne: null}});
+
+
+// $type
+db.users.find({phone: {$type: "number"}});
+
+db.users.find({phone: {$type: ["number", "string"]}});
+
+
+
+// Evaluation Operators
+// $regex (Search for Text)
+// It's better to put the text in an index (for performance)
+db.movies.find({summary: {$regex: /musical/}});
+
+
+// $expr
+// Useful if you want to compare two fields w/i one field
+// Then return all documents that match
+use("financialData");
+db.sales.drop();
+
+db.sales.insertMany([
+    {volume: 100, target: 120},
+    {volume: 89, target: 80},
+    {volume: 200, target: 177}]);
+
+// we want to find all entries where volume > target
+// the $field has mongo look at the actual field of the document
+db.sales.find({$expr: {$gt: ["$volume", "$target"]}});
+
+// More complex form
+// We want to see if the volumne is greater than 190, 
+// difference has to be greater than 10
+db.sales.find({$expr: {
+    $gt: [{
+        $cond: {
+            if: {$gte: ["$volume", 190]}, 
+            then: {$subtract: ["$volume", 10]}, 
+            else: "$volume"}}, 
+        "$target"]}});
+
+
