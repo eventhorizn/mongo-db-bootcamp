@@ -1,0 +1,90 @@
+// Cursors
+
+use("movieData");
+
+// count() attaches to cursor
+db.movies.find().count();
+
+// only 20 returned
+db.movies.find();
+
+// Get the next one...
+db.movies.find().next();
+
+// data cursor
+var dataCursor = db.movies.find();
+dataCursor.next();
+
+// This will get you all documents
+dataCursor.forEach(doc => {
+    printjson(doc)
+});
+
+// This will result in an error
+// cursor is exhausted
+dataCursor.next();
+
+// Can check if there's a next value
+// Can re-assign the cursor
+dataCursor.hasNext();
+
+
+
+// Sorting Cursor Results
+// 1 means ascending
+// -1 means descending
+db.movies.find().sort({"rating.average": 1});
+
+// Multiple sorting
+db.movies.find().sort({"rating.average": 1, runtime: 1});
+
+
+
+// Skipping and Limiting cursor results
+// Consider pagination, on page 2, you want to skip first 10
+
+// skip
+db.movies.find().sort({"rating.average": 1, runtime: -1}).skip(10);
+
+// limit
+// limits the number of results returned
+db.movies.find().sort({"rating.average": 1, runtime: -1}).limit(2);
+
+// You can put the above in whatever order you want
+// It will sort, then skip, then limit
+
+
+
+// Projection
+// We can control which data is returned
+// Say we only care about the name, genres and rating
+// Second argument handles projection
+// 1 means show, default is 0
+// id is always shown, unless you manually _id: 0
+db.movies.find({}, {name: 1, genres: 1, runtime: 1, rating: 1});
+
+// Can use path notation
+db.movies.find({}, {name: 1, genres: 1, runtime: 1, rating: 1, "schedule.time": 1});
+
+
+// Projection on arrays
+// Find first match for first query
+db.movies.find({genres: "Drama"}, {"genres.$": 1});
+
+// Returns Horror, b/c it only returns matches when it finds Horror
+db.movies.find({genres: {$all: ["Drama", "Horror"]}}, {"genres.$": 1});
+
+// Want to pull out items in an array
+// Filter doesn't have to match what you are looking for
+db.movies.find({genres: "Drama"}, {genres: {$elemMatch: {$eq: "Horror"}}})
+
+db.movies.find({"rating.average": {$gt: 9}}, {genres: {$elemMatch: {$eq: "Horror"}}})
+
+// $slice
+// Gives you a subset of an array
+db.movies.find({"rating.average": {$gt: 9}}, {genres: {$slice: 2}});
+
+// skip 1st, get next 2
+db.movies.find({"rating.average": {$gt: 9}}, {genres: {$slice: [1, 2]}});
+
+

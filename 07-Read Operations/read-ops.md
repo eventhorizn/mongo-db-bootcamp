@@ -1,5 +1,7 @@
 # Reading Data
 
+[Find Documentation](https://docs.mongodb.com/manual/reference/method/db.collection.find/)
+
 ## Methods, Filters, & Operators
 
 ### Method
@@ -60,3 +62,16 @@ Delete uses the same operators
 1. $elemMatch
 1. $meta (related to indexes)
 1. $slice
+
+## Understanding Cursors
+
+[Cursor Documentation](https://docs.mongodb.com/manual/tutorial/iterate-a-cursor/)
+
+1. find() returns a cursor (pointer)
+    - Instead of returning all the results (could be millions)
+    - Only returns 20
+    - Returns documents 1 by 1
+1. If you write an app w/ a mongodb driver
+    - You have to control that cursor manually
+    - You have a query that finds 1000 items...
+    - The cursor automatically does fetching for you

@@ -1,0 +1,57 @@
+// This is using the data from the assignment
+
+use("user");
+
+// This doesn't find any documents
+db.users.find({hobbies: "Sports"});
+
+// Still nothing
+db.users.find({hobbies: {title: "Sports"}});
+
+// Gets a result, but only w/ frequency 2
+// Other's have hobby of Sports and aren't returned
+db.users.find({hobbies: {title: "Sports", frequency: 2}});
+
+// We use dot notation w/ quotes
+// You can use this for embedded docs,
+// and for an array of embedded docs
+db.users.find({"hobbies.title": "Sports"});
+
+
+
+// Array Query Selectors
+
+// $size
+db.users.insertOne({name: "Chris", hobbies: ["Sports", "Cooking", "Hiking"]});
+
+// Can only find an exact number
+db.users.find({hobbies: {$size: 3}});
+
+
+// $all
+use("boxOFfice");
+
+// Only finds one, since the array matches exactly
+db.movieStarts.find({genre: ["action", "thriller"]});
+
+// What if I don't care about order?
+db.movieStarts.find({genre: {$all: ["action", "thriller"]}});
+
+
+// $elemMatch
+use("users");
+
+// Find all users w/ hobbie of sports and frequency = 2
+db.users.find({$and: [{"hobbies.title": "Sports"}, {"hobbies.frequency": {$gte: 2}}]});
+
+// This gives me Anna again
+// Because, one of the elems have a frequency gte 2 and one has Sports title
+// It doesn't have to be the same document
+db.users.find({$and: [{"hobbies.title": "Sports"}, {"hobbies.frequency": {$gte: 2}}]});
+
+// The same element should match the conditions
+db.users.find({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}});
+
+
+
+
