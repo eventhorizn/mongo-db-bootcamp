@@ -1,0 +1,27 @@
+// Delete Operations
+// Need users collection
+
+// deleteOne() and deleteMany()
+db.users.find();
+
+// Gonna delete Chris
+// Second argument is for a write concern
+db.users.deleteOne({name: "Chris"});
+db.users.find();
+
+
+// deleteMany()
+db.users.deleteMany({totalAge: {$exists: false}, isSporty: true});
+db.users.find();
+
+
+
+// Delete all entries in a Collection
+// 1st way
+db.users.deleteMany({});
+
+// 2nd way
+db.users.drop();
+
+// Admins from the shell call drop, app devs...not so much
+db.dropDatabase(); // Drops active db
