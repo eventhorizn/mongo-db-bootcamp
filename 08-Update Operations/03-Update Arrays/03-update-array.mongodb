@@ -1,0 +1,87 @@
+// Updating Arrays
+// Need our users collection
+db.users.find({hobbies: {$elemMatch: 
+    {title: "Sports", frequency: {$gte: 3}}}});
+
+// Updating matched array element
+// hobbies.$ refers to items matched in filter
+// Adds new field
+db.users.updateMany(
+    {hobbies: {$elemMatch: 
+        {title: "Sports", frequency: {$gte: 3}}}},
+    {$set: {"hobbies.$.highFrequency": true}});
+db.users.find();
+
+
+// Updating all array elements
+db.users.updateMany(
+    {totalAge: {$gt: 30}},
+    {$inc: {"hobbies.$[].frequency": -1}});
+
+db.users.find();
+
+
+
+// Finding and Updating Specific Fields
+// Want to find all hobbies w/ frequency gt 2
+db.users.find({"hobbies.frequency": {$gt: 2}});
+
+db.users.updateMany(
+    {"hobbies.frequency": {$gt: 2}},
+    {$set: {"hobbies.$[el].goodFrequency": true}},
+    {arrayFilters: [{"el.frequency": {$gt: 2}}]});
+db.users.find();
+
+
+
+// Adding elements to arrays
+// $push pushes new element to array
+
+db.users.updateOne(
+    {name: "Katie"}, 
+    {$push: {hobbies: {title: "Sports", frequency: 2}}});
+
+// push can be used to add multiple documents
+// $each and $sort (sort not req) go together
+
+db.users.updateOne(
+    {name: "Katie"}, 
+    {$push: {hobbies: {
+        $each: [
+            {title: "Good Wine", frequency: 1}, 
+            {title: "Hiking", frequency: 2}], 
+            $sort: {frequency: -1}}}});
+db.users.find({name: "Katie"});
+
+
+
+// Removing elements from arrays
+// Removes Hiking values
+db.users.updateOne(
+    {name: "Katie"}, 
+    {$pull: {hobbies: {title: "Hiking"}}});
+db.users.find({name: "Katie"});
+
+// Remove last element
+db.users.find({name: "Chris"});
+
+db.users.updateOne({name: "Chris"}, {$pop: {hobbies: 1}});
+
+db.users.find({name: "Chris"});
+
+
+
+// Understanding $addToSet
+// Similar to $push
+db.users.find({name: "Katie"});
+
+db.users.updateOne(
+    {name: "Katie"}, 
+    {$addToSet: {hobbies: {title: "Hiking", frequency: 2}}});
+
+db.users.find({name: "Katie"});
+
+// What's the difference to push?
+// You can push duplicate values, you can't w/ $addToSet
+// It adds unique values only
+

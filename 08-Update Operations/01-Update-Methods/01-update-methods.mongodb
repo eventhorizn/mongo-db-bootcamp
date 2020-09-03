@@ -1,0 +1,119 @@
+// Make sure you import the Users data set
+use("users");
+
+// You can use the same filters for update that you used in find
+// You can update as many at once as you want
+
+// Even if multiple docs match the criteria, updateOne
+// updates the first found
+db.users.find();
+
+// updateOne
+db.users.updateOne(
+    {_id: ObjectId("5f4ebed2d179253b6c1c2d6a")}, 
+    {$set: {hobbies: [
+        {title: "Sports", frequency: 5}, 
+        {title: "Cooking", frequency: 3}, 
+        {title: "Hiking", frequency: 1}]}});
+
+db.users.findOne({_id: ObjectId("5f4ebed2d179253b6c1c2d6a")});
+
+// updateMany
+db.users.updateMany(
+    {"hobbies.title": "Sports"}, 
+    {$set: {isSporty: true}});
+db.users.find({"hobbies.title": "Sports"});
+
+
+
+// Updating many fields w/ $set
+db.users.updateOne(
+    {_id: ObjectId("5f4ebed2d179253b6c1c2d6a")},
+    {$set: {age: 40, phone: 483924792}});
+
+
+// Incrementing and Decrementing Values
+db.users.find();
+
+db.users.updateOne(
+    {name: "Katie"}, 
+    {$inc: {age: 1}});
+
+db.users.find();
+
+// decrement
+db.users.updateOne(
+    {name: "Katie"}, 
+    {$inc: {age: -1}});
+
+db.users.updateOne(
+    {name: "Katie"}, 
+    {$inc: {age: 1}, $set: {isSporty: false}});
+
+db.users.find();
+
+// Can't do this
+db.users.updateOne(
+    {name: "Katie"}, 
+    {$inc: {age: 1}, $set: {age: 30}});
+
+
+
+// Using $min, $max, $mul
+
+// $min
+// You want to set a field, only if it's higher
+db.users.updateOne(
+    {name: "Chris"}, 
+    {$min: {age: 35}});
+
+
+// Matched, but not updated
+// Min only changes value if it's higher than min value
+db.users.updateOne(
+    {name: "Chris"}, 
+    {$min: {age: 38}});
+
+
+// $max
+// Oposite of above
+db.users.updateOne(
+    {name: "Chris"}, 
+    {$max: {age: 38}});
+
+// $mul (multiply)
+db.users.updateOne(
+    {name: "Chris"}, 
+    {$mul: {age: 1.1}});
+    
+db.users.find();
+
+
+
+// Getting rid of fields
+// Drop phone value of all sporty peeps
+db.users.updateMany({isSporty: true}, {$unset: {phone: ""}});
+
+db.users.find();
+
+
+
+// Renaming Fields
+// renaming age to totalAge
+db.users.updateMany({}, {$rename: {age: "totalAge"}});
+db.users.find();
+
+
+
+// Understanding upsert()
+// The idea is you either insert a new document if it doesn't exist or
+// update a document if it does
+// It inserts the name as Maria even though it was a filter value
+db.users.updateOne(
+    {name: "Maria"}, 
+    {$set: {age: 29, hobbies: [
+        {title: "Good Food", frequency: 3}], isSporty: true}},
+    {upsert: true});
+db.users.find();
+
+

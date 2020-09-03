@@ -1,0 +1,24 @@
+// 1. Create a new collection ("sports") and
+//    upsert 2 new docs into it with: "title", "requiresTeam"
+db.sports.drop();
+db.sports.insertMany([
+    {title: "Soccer", requiresTeam: true},
+    {title: "Golf", requiresTeam: false},
+    {title: "Football", requiresTeam: true},
+    {title: "Darts", requiresTeam: false}]);
+
+// 2. Update all docs which do require a team
+//    by adding a new field w/ the min amount of
+//    players required
+db.sports.updateMany(
+    {requiresTeam: true}, 
+    {$min: {players: 10}});
+db.sports.find();
+
+// 3. Update all docs that require a team by increasing num of
+//    required players by 10
+db.sports.updateMany(
+    {requiresTeam: true},
+    {$inc: {players: 10}});
+db.sports.find();
+
