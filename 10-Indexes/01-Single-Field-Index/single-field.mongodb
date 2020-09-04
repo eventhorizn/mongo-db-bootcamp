@@ -154,7 +154,6 @@ db.sessions.find();
 
 // Covered Query
 // When totalDocsExamined = 0
-
 db.customers.insertMany([
     {name: "Max", age: 29, salary: 3000},
     {name: "Manu", age: 30, salary: 4000}
@@ -181,6 +180,117 @@ db.customers.createIndex({age: 1, name: 1});
 // You can see the rejected plan was to use just the name
 db.customers.explain().find({name: "Max", age: 30});
 
+// This will show all the detailed statistics for all plans
+db.customers.explain("allPlansExecution").find({name: "Max", age: 30});
 
 
-db.customers.
+
+// Using Multi-Key Indexes
+db.contacts.drop()
+
+db.contacts.insertOne(
+    {name: "Max", hobbies: ["Cooking", "Sports"], 
+     addresses: [{street: "Main Street"}, {street: "Second Street"}]});
+
+// Index an array
+db.contacts.createIndex({hobbies: 1});
+
+// Notice 'isMultiKey: true'
+// Multi-keys are generally bigger (stores every value in array)
+db.contacts.explain("executionStats").find({hobbies: "Sports"});
+
+db.contacts.createIndex({addresses: 1});
+
+// Uses a collection scan instead of index
+// Why? Due to us looking for a field inside of the sub document
+db.contacts.explain("executionStats").find({"addresses.street": "Main Street"});
+
+// Uses the index now, since we are using the full document
+db.contacts.explain("executionStats").find({addresses: {street: "Main Street"}});
+
+// Something you can do...
+db.contacts.createIndex({"addresses.street": 1});
+
+// We repeat this query
+// And we see it hits the index w/ a multi key
+db.contacts.explain("executionStats").find({"addresses.street": "Main Street"});
+
+
+// This works
+// Combo of multi index and compound index
+db.contacts.createIndex({name: 1, hobbies: 1});
+
+// This doesn't
+// Can create a multi keys from multiple arrays
+// Would need to create a cartesian product, so it would get too big
+db.contacts.createIndex({addresses: 1, hobbies: 1});
+
+
+
+
+// Understanding "text" Indexes
+// Special kind of multi index
+// Turns the text into an array of single words
+// For example:
+// This product is a must-buy for all fans of modern fiction
+// product must buy fans modern fiction
+db.products.drop();
+
+db.products.insertMany([
+    {title: "A Book", description: "This is an awesome book about a young artisg"},
+    {title: "Red T-Shirt", description: "This T-Shirt is red and it's pretty awesome"}])
+
+// Don't do description: 1, creates a solid string index, you want an array
+db.products.createIndex({description: "text"});
+
+// Case doesn't matter, all stored lowercase for search
+// Finds both
+db.products.find({$text: {$search: "awesome"}});
+
+// Finds one
+db.products.find({$text: {$search: "book"}});
+
+// Finds both (looks for red, and for book)
+db.products.find({$text: {$search: "red book"}});
+
+// Search for 'red book'
+db.products.find({$text: {$search: "\"red book\""}});
+
+
+
+// So we want to find the best search that hits both of these
+// We can find the 'score' through projection
+db.products.find({$text: {$search: "awesome t-shirt"}});
+
+// You can sort by which doc matches better
+db.products.find({$text: {$search: "awesome t-shirt"}}, {score: {$meta: "textScore"}}).sort({score: {$meta: "textScore"}});
+
+
+
+
+// Create combined text indixes
+
+// This causes an error since we can't have more than one text index
+db.products.createIndex({title: "text"});
+
+// However, we can combine multiple text fields into one text index
+db.products.dropIndex("description_text");
+
+db.products.createIndex({title: "text", description: "text"});
+
+db.products.insertOne({title: "A Ship", description: "Floats perfectly"})
+
+db.products.find({$text: {$search: "ship"}});
+
+
+
+// Using text indexes to exclude words
+db.products.find({$text: {$search: "awesome"}});
+
+// Lets say I want to find results w/ awesome but w/o t-shirt
+db.products.find({$text: {$search: "awesome -t-shirt"}});
+
+
+
+// Setting Default Language & Using Weights
+
