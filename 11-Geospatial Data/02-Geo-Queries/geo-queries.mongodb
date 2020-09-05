@@ -1,0 +1,36 @@
+// Querying GeoJSON (Geospatial) Data
+
+// We are finding if a point is near a spot in the db
+// This doesn't work yet, we need a geospatial index
+db.places.find({location: 
+    {$near: {$geometry: 
+        {type: "Point", coordinates: [-122.471114, 37.771104]}}}});
+
+
+
+// Adding Geospatial Index
+db.places.createIndex({location: "2dsphere"});
+
+// Works now
+db.places.find({location: 
+    {$near: {$geometry: 
+        {type: "Point", coordinates: [-122.471114, 37.771104]}}}});
+
+// How is near defined?
+// We can put in distance parameters (in meters)
+// Not found, too short
+db.places.find({location: 
+    {$near: {$geometry: 
+        {type: "Point", coordinates: [-122.471114, 37.771104]},
+        $maxDistance: 30, $minDistance: 10}}});
+
+// This one will be found
+db.places.find({location: 
+    {$near: {$geometry: 
+        {type: "Point", coordinates: [-122.471114, 37.771104]},
+        $maxDistance: 500, $minDistance: 10}}});
+
+
+
+
+
