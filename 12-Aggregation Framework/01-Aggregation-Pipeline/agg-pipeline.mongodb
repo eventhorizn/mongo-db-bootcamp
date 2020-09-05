@@ -1,0 +1,28 @@
+// Aggregation Pipeline
+
+// Need to add the persons data first
+// mongoimport persons.json -d persons -c contacts --jsonArray --drop
+// run in shell
+
+// aggregate can take advantage of indexes
+// also uses a cursor
+// Simple aggregate with just match (same as find)
+db.persons.aggregate([
+    {$match: {gender: "female"}}
+]);
+
+// Group to merge documents, a way to find how many in a location.state
+db.persons.aggregate([
+    {$match: {gender: "female"}},
+    {$group: {_id: {state: "$location.state"}, totalPersons: {$sum: 1}}}
+]);
+
+// Sorting
+db.persons.aggregate([
+    {$match: {gender: "female"}},
+    {$group: {_id: {state: "$location.state"}, totalPersons: {$sum: 1}}},
+    {$sort: {totalPersons: -1}}
+]);
+
+
+
