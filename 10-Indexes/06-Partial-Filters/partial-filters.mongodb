@@ -1,0 +1,47 @@
+// Understanding Partial Filters
+
+// An index can be unnecessarily big if your queries only return a small
+// amount of data (most values are not being hit)
+db.contacts.getIndexes();
+
+db.contacts.dropIndex({"dob.age": 1});
+db.contacts.dropIndex({"dob.age": 1, gender: 1});
+
+db.contacts.createIndex(
+    {"dob.age": 1}, 
+    {partialFilterExpression: {gender: "male"}});
+
+// You'll see a collscan instead of the index being used
+// since gender wasn't part of the filter
+db.contacts.explain().find({"dob.age": {$gt: 60}});
+
+db.contacts.explain().find({"dob.age": {$gt: 60}, gender: "male"});
+
+// Difference b/t partial and complex index, partial is smaller
+// Only males in the index
+
+
+
+// Applying the Partial Index
+// Make sure these are the only docs in
+db.users.insertMany([
+    {name: "Max", email: "max@test.com"},
+    {name: "Manu"}
+]);
+
+db.users.createIndex({email: 1}, {unique: true});
+
+// We get an error b/c the null value for email already exists
+// For mongoDB null is a value
+db.users.insertOne({name: "Anna"});
+
+// To fix this
+db.users.dropIndex({email: 1});
+
+db.users.createIndex({email: 1}, {unique: true, partialFilterExpression: {email: {$exists: true}}});
+db.users.insertOne({name: "Anna"});
+
+// This would fail however
+db.users.insertOne({name: "Anna", email: "max@test.com"});
+
+

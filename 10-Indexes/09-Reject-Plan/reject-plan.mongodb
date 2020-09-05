@@ -1,0 +1,12 @@
+// How MongoDB Rejects a Plan
+db.customers.getIndexes();
+
+db.customers.createIndex({age: 1, name: 1});
+
+// Order on filter doesn't matter for index
+// You can see the rejected plan was to use just the name
+db.customers.explain().find({name: "Max", age: 30});
+
+// This will show all the detailed statistics for all plans
+db.customers.explain("allPlansExecution").find({name: "Max", age: 30});
+

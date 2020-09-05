@@ -1,0 +1,14 @@
+// Understanding Time-To-Live Index
+
+// Self destroying data (session data)
+db.sessions.insertOne({data: "dkslaere", createdAt: new Date()});
+
+// This index won't delete any values present before it was created
+db.sessions.createIndex({createdAt: 1}, {expireAfterSeconds: 10});
+
+// Adding a new element triggers mongoDB to 're-do' index on table...
+db.sessions.insertOne({data: "dkffyujjslaere", createdAt: new Date()});
+
+// So both items are now gone after 10 seconds
+db.sessions.find();
+

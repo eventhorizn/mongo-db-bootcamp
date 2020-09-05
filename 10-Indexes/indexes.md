@@ -73,3 +73,20 @@ MongoDB caches this plan as "Winning" plan for future queries so it doesn't need
     - Index is Rebuilt
     - Other Indexes are Added or Removed
     - MongoDB Server is Restarted
+
+## Building Indexes
+
+Two different ways
+
+1. Foreground (Most of our examples)
+    - Collection is locked during index creation
+    - Faster
+1. Background
+    - Collection is accessible during index creation
+    - Slower
+
+# Useful Resources & Links
+
+1. [Partial Filter Expressions](https://docs.mongodb.com/manual/core/index-partial/)
+1. [Supported Default Languages](https://docs.mongodb.com/manual/reference/text-search-languages/#text-search-languages)
+1. [Use Different Languages in Same Index](https://docs.mongodb.com/manual/tutorial/specify-language-for-text-index/#create-a-text-index-for-a-collection-in-multiple-languages)

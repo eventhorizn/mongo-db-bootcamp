@@ -1,0 +1,26 @@
+// Background Index
+// Command
+// mongo credit-rating.js
+use("credit");
+
+db.ratings.count();
+
+// This is all foreground indexing
+// Notice it took a bit (not long, but not fast)
+db.ratings.createIndex({age: 1});
+
+db.ratings.explan("executionStats").find({age: {$gt: 80}});
+
+db.ratings.dropIndex({age: 1});
+
+// Definitely took longer w/o index
+db.ratings.explan("executionStats").find({age: {$gt: 80}});
+
+// It does take time to create an index, and you can't access collection while it's being created
+// You can show this by opening two shells, create an index in one and run an insert/select while 
+// on the other. The select/insert will pause for the index to be created
+// If there's a lot of data...the db will be locked down for a while
+// This will create an index w/o locking the db down
+db.ratings.createIndex({age: 1}, {background: true});
+
+

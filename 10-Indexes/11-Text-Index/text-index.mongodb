@@ -1,0 +1,62 @@
+// Understanding "text" Indexes
+// Special kind of multi index
+// Turns the text into an array of single words
+// For example:
+// This product is a must-buy for all fans of modern fiction
+// product must buy fans modern fiction
+db.products.drop();
+
+db.products.insertMany([
+    {title: "A Book", description: "This is an awesome book about a young artisg"},
+    {title: "Red T-Shirt", description: "This T-Shirt is red and it's pretty awesome"}])
+
+// Don't do description: 1, creates a solid string index, you want an array
+db.products.createIndex({description: "text"});
+
+// Case doesn't matter, all stored lowercase for search
+// Finds both
+db.products.find({$text: {$search: "awesome"}});
+
+// Finds one
+db.products.find({$text: {$search: "book"}});
+
+// Finds both (looks for red, and for book)
+db.products.find({$text: {$search: "red book"}});
+
+// Search for 'red book'
+db.products.find({$text: {$search: "\"red book\""}});
+
+
+
+// So we want to find the best search that hits both of these
+// We can find the 'score' through projection
+db.products.find({$text: {$search: "awesome t-shirt"}});
+
+// You can sort by which doc matches better
+db.products.find({$text: {$search: "awesome t-shirt"}}, {score: {$meta: "textScore"}}).sort({score: {$meta: "textScore"}});
+
+
+
+
+// Create combined text indixes
+
+// This causes an error since we can't have more than one text index
+db.products.createIndex({title: "text"});
+
+// However, we can combine multiple text fields into one text index
+db.products.dropIndex("description_text");
+
+db.products.createIndex({title: "text", description: "text"});
+
+db.products.insertOne({title: "A Ship", description: "Floats perfectly"})
+
+db.products.find({$text: {$search: "ship"}});
+
+
+
+// Using text indexes to exclude words
+db.products.find({$text: {$search: "awesome"}});
+
+// Lets say I want to find results w/ awesome but w/o t-shirt
+db.products.find({$text: {$search: "awesome -t-shirt"}});
+

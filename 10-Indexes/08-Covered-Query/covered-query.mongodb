@@ -1,0 +1,16 @@
+// Covered Query
+// When totalDocsExamined = 0
+db.customers.insertMany([
+    {name: "Max", age: 29, salary: 3000},
+    {name: "Manu", age: 30, salary: 4000}
+]);
+
+db.customers.createIndex({name: 1});
+
+// So this is a typical plan for a typical plan
+db.customers.explain("executionStats").find({name: "Max"});
+
+// Only return indexed fields through projection
+// So query is fully covered by index...very fast!
+db.customers.explain("executionStats").find({name: "Max"}, {_id: 0, name: 1});
+

@@ -1,0 +1,28 @@
+// Setting Default Language & Using Weights
+db.products.dropIndex("title_text_description_text");
+
+// There is a list of supported languages
+// With combined text indexes, you can give weights to each one
+// Weights are relative to each other
+db.products.createIndex(
+    {title: "text", description: "text"},
+    {default_language: "english", weights: {title: 1, description: 10}});
+
+
+// You can have different languages for different documents
+// Can also turn on case sensitivity
+db.products.find({$text: 
+    {$search: "red", $language: "english", $caseSensitive: false}});
+
+db.products.find({$text: {$search: "red"}}, {score: {$meta: "textScore"}});
+
+
+// Now what happens when we remove the weights from the index?
+db.products.dropIndex("title_text_description_text");
+
+db.products.createIndex(
+    {title: "text", description: "text"},
+    {default_language: "english"});
+
+// Score is different
+db.products.find({$text: {$search: "red"}}, {score: {$meta: "textScore"}});

@@ -1,0 +1,6 @@
+// Configuring Indexes
+
+// This fails due to email not being unique in collection
+// So this is either a good check to see if a field is unique, or
+// to make sure it stays unique
+db.contacts.createIndex({email: 1}, {unique: true});

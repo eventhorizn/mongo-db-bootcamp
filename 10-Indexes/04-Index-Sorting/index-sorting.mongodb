@@ -1,0 +1,12 @@
+// Using Indexes for Sorting
+// If you want to sort in the same way index is sorted
+db.contacts.explain().find({"dob.age": 35}).sort({gender: 1});
+
+// You can timeout if you sort on a large amount of documents
+// Mongo db has memory limit (32mb), and it puts all docs in memory to sort
+
+
+
+// Default Index
+db.contacts.getIndexes();
+// _id is the default index

@@ -1,0 +1,16 @@
+// Understanding Index Restrictions
+// If your queries often return most/all of your collection, indexes
+// may not help and may hurt
+
+// So this query returns everyone...
+// Execution time is higher than $gt: 60
+db.contacts.explain("executionStats").find({"dob.age": {$gt: 20}});
+
+
+// Removing the index
+db.contacts.dropIndex({"dob.age": 1});
+
+// This is faster than when we had the index
+// Because we have to go through all the docs anyways, w/ an index
+// we have to go through the index too
+db.contacts.explain("executionStats").find({"dob.age": {$gt: 20}});

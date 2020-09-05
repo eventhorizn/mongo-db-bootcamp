@@ -1,0 +1,39 @@
+// Using Multi-Key Indexes
+db.contacts.drop()
+
+db.contacts.insertOne(
+    {name: "Max", hobbies: ["Cooking", "Sports"], 
+     addresses: [{street: "Main Street"}, {street: "Second Street"}]});
+
+// Index an array
+db.contacts.createIndex({hobbies: 1});
+
+// Notice 'isMultiKey: true'
+// Multi-keys are generally bigger (stores every value in array)
+db.contacts.explain("executionStats").find({hobbies: "Sports"});
+
+db.contacts.createIndex({addresses: 1});
+
+// Uses a collection scan instead of index
+// Why? Due to us looking for a field inside of the sub document
+db.contacts.explain("executionStats").find({"addresses.street": "Main Street"});
+
+// Uses the index now, since we are using the full document
+db.contacts.explain("executionStats").find({addresses: {street: "Main Street"}});
+
+// Something you can do...
+db.contacts.createIndex({"addresses.street": 1});
+
+// We repeat this query
+// And we see it hits the index w/ a multi key
+db.contacts.explain("executionStats").find({"addresses.street": "Main Street"});
+
+
+// This works
+// Combo of multi index and compound index
+db.contacts.createIndex({name: 1, hobbies: 1});
+
+// This doesn't
+// Can create a multi keys from multiple arrays
+// Would need to create a cartesian product, so it would get too big
+db.contacts.createIndex({addresses: 1, hobbies: 1});
