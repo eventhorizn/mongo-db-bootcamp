@@ -11,3 +11,13 @@ Retrieving Data Efficiently & In a Structured Way
 1. Alternative to Find
 1. You build a pipeline to your output
     - Collection -> $match -> $sort -> $group -> $project -> Output
+
+## $group vs $project
+
+1. $group
+    - n:1
+    - Sum, Count, Average, Build Array
+1. $project
+    - 1:1 
+    - Include/Exclude Fields
+    - Transform Fields (w/i a single document)

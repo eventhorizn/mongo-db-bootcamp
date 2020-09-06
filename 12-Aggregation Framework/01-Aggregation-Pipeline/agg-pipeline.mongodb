@@ -59,3 +59,285 @@ db.persons.aggregate([
 
 
 
+// Turning Location into a geoJSON Object
+// If you look at location, it has a coordinates field
+// Also gonna flatten some fields
+// You can have multiple project lines
+db.persons.aggregate([
+    { 
+      $project: { 
+        _id: 0, 
+        name: 1, 
+        email: 1, 
+        location: { 
+          type: "Point", 
+          coordinates: [
+            { 
+              $convert: { 
+                input: "$location.coordinates.longitude", 
+                to: "double", 
+                onError: 0.0, 
+                onNull: 0.0 
+              }
+            }, 
+            { 
+              $convert: { 
+                input: "$location.coordinates.latitude", 
+                to: "double", 
+                onError: 0.0, 
+                onNull: 0.0 
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        gender: 1,
+        email: 1,
+        location: 1,
+        fullName: {
+          $concat: [
+            { $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.first',
+                1,
+                { $subtract: [{ $strLenCP: '$name.first' }, 1] }
+              ]
+            },
+            ' ',
+            { $toUpper: { $substrCP: ['$name.last', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.last',
+                1,
+                { $subtract: [{ $strLenCP: '$name.last' }, 1] }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]);
+
+
+  // Transforming Birthdate
+  db.persons.aggregate([
+    { 
+      $project: { 
+        _id: 0, 
+        name: 1, 
+        email: 1,
+        birthdate: { $convert: { input: "$dob.date", to: "date" } },
+        age: "$dob.age",
+        location: { 
+          type: "Point", 
+          coordinates: [
+            { 
+              $convert: { 
+                input: "$location.coordinates.longitude", 
+                to: "double", 
+                onError: 0.0, 
+                onNull: 0.0 
+              }
+            }, 
+            { 
+              $convert: { 
+                input: "$location.coordinates.latitude", 
+                to: "double", 
+                onError: 0.0, 
+                onNull: 0.0 
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        gender: 1,
+        email: 1,
+        location: 1,
+        birthdate: 1,
+        age: 1,
+        fullName: {
+          $concat: [
+            { $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.first',
+                1,
+                { $subtract: [{ $strLenCP: '$name.first' }, 1] }
+              ]
+            },
+            ' ',
+            { $toUpper: { $substrCP: ['$name.last', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.last',
+                1,
+                { $subtract: [{ $strLenCP: '$name.last' }, 1] }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]);
+
+
+// Transformation Shortcuts
+// If you don't have OnError and OnNull
+db.persons.aggregate([
+  { 
+    $project: { 
+      _id: 0, 
+      name: 1, 
+      email: 1,
+      birthdate: { $toDate: "$dob.date" },
+      age: "$dob.age",
+      location: { 
+        type: "Point", 
+        coordinates: [
+          { 
+            $convert: { 
+              input: "$location.coordinates.longitude", 
+              to: "double", 
+              onError: 0.0, 
+              onNull: 0.0 
+            }
+          }, 
+          { 
+            $convert: { 
+              input: "$location.coordinates.latitude", 
+              to: "double", 
+              onError: 0.0, 
+              onNull: 0.0 
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      gender: 1,
+      email: 1,
+      location: 1,
+      birthdate: 1,
+      age: 1,
+      fullName: {
+        $concat: [
+          { $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+          {
+            $substrCP: [
+              '$name.first',
+              1,
+              { $subtract: [{ $strLenCP: '$name.first' }, 1] }
+            ]
+          },
+          ' ',
+          { $toUpper: { $substrCP: ['$name.last', 0, 1] } },
+          {
+            $substrCP: [
+              '$name.last',
+              1,
+              { $subtract: [{ $strLenCP: '$name.last' }, 1] }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]);
+
+
+// Understanding $isoWeekYear Operator
+// We want to group on birthdate
+db.persons.aggregate([
+  { 
+    $project: { 
+      _id: 0, 
+      name: 1, 
+      email: 1,
+      birthdate: { $toDate: "$dob.date" },
+      age: "$dob.age",
+      location: { 
+        type: "Point", 
+        coordinates: [
+          { 
+            $convert: { 
+              input: "$location.coordinates.longitude", 
+              to: "double", 
+              onError: 0.0, 
+              onNull: 0.0 
+            }
+          }, 
+          { 
+            $convert: { 
+              input: "$location.coordinates.latitude", 
+              to: "double", 
+              onError: 0.0, 
+              onNull: 0.0 
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      gender: 1,
+      email: 1,
+      location: 1,
+      birthdate: 1,
+      age: 1,
+      fullName: {
+        $concat: [
+          { $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+          {
+            $substrCP: [
+              '$name.first',
+              1,
+              { $subtract: [{ $strLenCP: '$name.first' }, 1] }
+            ]
+          },
+          ' ',
+          { $toUpper: { $substrCP: ['$name.last', 0, 1] } },
+          {
+            $substrCP: [
+              '$name.last',
+              1,
+              { $subtract: [{ $strLenCP: '$name.last' }, 1] }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  { $group: { _id: { birthYear: { $isoWeekYear: "$birthdate" } }, numPersons: { $sum: 1 } } },
+  { $sort: { numPersons: -1 } }
+]);
+
+
+
+
+// Understanding $bucket
+db.persons.aggregate([
+  { 
+    $bucket: { 
+      groupBy: "dob.age", 
+      boundaries: [0, 18, 30, 50, 80, 120], 
+      output: {
+        names: { $push: "$name.first" }
+      } 
+    } 
+  }
+]);
+
