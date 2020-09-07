@@ -18,3 +18,8 @@ Numbers get stored as 64bit as default (javascript)
     - Numbers with Decimal Places
     - Bigger range
     - Decimal values are stored w/ high precision (34 decimal digits)
+
+# Helpful Links
+
+1. [Number Ranges](https://social.msdn.microsoft.com/Forums/vstudio/en-US/d2f723c7-f00a-4600-945a-72da23cbc53d/can-anyone-explain-clearly-about-float-vs-decimal-vs-double-?forum=csharpgeneral)
+1. [Model Monetary Data](https://docs.mongodb.com/manual/tutorial/model-monetary-data/)
