@@ -1,0 +1,22 @@
+// Working with Int32
+
+db.persons.deleteMany({});
+
+db.persons.insertOne({name: "Max", age: 29});
+
+// Even though you can't see the decimals, they are there
+db.persons.findOne();
+
+// To make number an int32...
+db.persons.insertOne({name: "Gary", age: NumberInt("29")});
+
+
+
+// Working with Int64
+
+db.persons.deleteMany({});
+
+db.persons.insertOne({name: "Dumb", value: NumberInt("5000000000000000")});
+
+db.persons.findOne();
+
