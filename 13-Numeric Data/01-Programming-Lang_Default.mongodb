@@ -1,5 +1,4 @@
 // Working with Int32
-
 db.persons.deleteMany({});
 
 db.persons.insertOne({name: "Max", age: 29});
@@ -13,10 +12,27 @@ db.persons.insertOne({name: "Gary", age: NumberInt("29")});
 
 
 // Working with Int64
-
 db.persons.deleteMany({});
 
-db.persons.insertOne({name: "Dumb", value: NumberInt("5000000000000000")});
+db.persons.insertOne({name: "Dumb", value: NumberLong(5000000000000000)});
 
 db.persons.findOne();
+
+
+
+// High Precision Doubles
+db.science.insertOne({a: 0.3, b: 0.1});
+
+// Notice how the result is not 0.2
+// Because of precision issues
+db.science.aggregate([{$project: {result: {$subtract: ["$a", "$b"]}}}]);
+
+
+// Fixing that...
+db.science.deleteMany({});
+
+// Ofc w/ higher precision, more space is taken up
+db.science.insertOne({a: NumberDecimal("0.3"), b: NumberDecimal("0.1")});
+
+db.science.aggregate([{$project: {result: {$subtract: ["$a", "$b"]}}}]);
 
