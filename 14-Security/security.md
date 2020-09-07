@@ -36,4 +36,47 @@
     - Does NOT need to be able to insert or fetch data
 1. Developer/App
     - Needs to be able to do CRUD
-    - Does NOT need to be able to create users or manage d
+    - Does NOT need to be able to create users or manage db config
+1. Data Scientist
+    - Needs to be able to fetch data
+    - Soesn't need to create users, manage config, or insert/delete
+
+## Create/Edit User
+
+![](create-edit-user.png)
+
+## Set Up Authorization
+
+```
+mongod --auth
+```
+
+## Built-in Roles
+
+[Official Doc](https://docs.mongodb.com/manual/reference/built-in-roles/)
+
+1. Database User
+    - read
+    - readWrite
+1. Database Admin
+    - dbAdmin
+    - userAdmin
+    - dbOwner
+1. All Database Roles
+    - readAnyDatabase
+    - readWriteAnyDatabase
+    - userAdminAnyDatabase
+    - dbAdminAnyDatabase
+1. Cluster Admin (constructs where you have multiple servers working together)
+    - clusterManager
+    - clusterMonitor
+    - hostManager
+    - clusterAdmin
+1. Backup/Restore
+    - backup
+    - restore
+1. Superuser
+    - dbOwner (admin)
+    - userAdmin (admin)
+    - userAdminAnyDatabase
+    - root

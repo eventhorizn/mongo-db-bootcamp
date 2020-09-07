@@ -1,0 +1,24 @@
+// So this sets up Mongo to lock behind requiring users
+//mongod --auth
+
+// After setting this, we'll be able to log in to mongo, but we won't
+// be able to see db, or to do anything on databases
+// We need to set up users first
+
+// Switch to admin db
+// We will usually create a user on a specific db
+// Creating users on the admin db creates 'super users'
+use("admin");
+
+// Set up users
+// Only works in shell, not in vscode
+db.createUser({user: "gary", pwd: "gary", roles: ["userAdminAnyDatabase"]});
+
+// Authenticate
+db.auth("gary", "gary");
+
+
+
+// Assigning Roles to Users & Database
+// This commmand logs you in
+mongo -u username -p password --authenticationDatabase admin
