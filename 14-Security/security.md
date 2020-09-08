@@ -80,3 +80,20 @@ mongod --auth
     - userAdmin (admin)
     - userAdminAnyDatabase
     - root
+
+## Transport Encryption
+
+1. [MongoDB and SSL](https://docs.mongodb.com/manual/tutorial/configure-ssl/)
+1. [How to Create self-signed cert](https://stackoverflow.com/questions/10175812/how-to-create-a-self-signed-certificate-with-openssl)
+
+Ultimately, do this some other time...follow the docs
+
+# Useful Links
+
+1. [Encryption at Rest](https://docs.mongodb.com/manual/core/security-encryption-at-rest/)
+1. [Security Checklislt](https://docs.mongodb.com/manual/administration/security-checklist/)
+1. [What is SSL/TSL](https://www.acunetix.com/blog/articles/tls-security-what-is-tls-ssl-part-1/)
+1. [MongoDB SSL Setup](https://docs.mongodb.com/manual/tutorial/configure-ssl/)
+1. [MongoDB Users & Auth](https://docs.mongodb.com/manual/core/authentication/)
+1. [MongoDB Built-in Roles](https://docs.mongodb.com/manual/reference/built-in-roles/)
+1. [MongoDB Custom Roles](https://docs.mongodb.com/manual/core/security-user-defined-roles/)

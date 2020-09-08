@@ -22,3 +22,49 @@ db.auth("gary", "gary");
 // Assigning Roles to Users & Database
 // This commmand logs you in
 mongo -u username -p password --authenticationDatabase admin
+
+use("shop");
+
+db.createUser({user: "appdev", pwd: "dev", roles: ["readWrite"]});
+
+db.auth("appdev", "dev");
+
+// If we are logged in as the user we created above, we get a 'too many users'
+db.products.insertOne({name: "Book"});
+
+// Fix by:
+db.logout();
+
+// Then login
+db.auth("appdev", "dev");
+
+
+
+// Updating & Extending Roles to Other Databases
+// Roles are replacing, not adding
+// If you are logged in as appDev, this command will fail
+db.updateUser("appDev", {roles: ["readWrite", {role: "readWrite", db: "blog"}]})
+
+db.logout();
+
+use("admin");
+
+db.auth("gary", "gary");
+
+use("shop");
+
+db.updateUser("appDev", {roles: ["readWrite", {role: "readWrite", db: "blog"}]});
+
+db.getUser("appDev");
+
+db.logout();
+
+use("shop");
+
+db.auth("appDev", "dev");
+
+use("blog");
+
+db.blog.insertOne({title: "This works!"})
+
+

@@ -1,0 +1,59 @@
+// Run this in the shell
+
+// Create 3 users
+
+// 1. dbAdmin (can't create users, can create collections and indexes)
+use admin
+
+db.createUser({user: "garyDbAdmin", pwd: "gary", roles: ["dbAdmin"]})
+
+db.auth("garyDbAdmin", "gary")
+
+use test
+
+db.createCollection("customers")
+
+db.createCollection("sales")
+
+use admin
+
+db.logout()
+
+// 2. userAdmin (can create users, can't collections, indexes)
+
+db.createUser({user: "garyUserAdmin", pwd: "gary", roles: ["userAdmin"]})
+
+db.auth("garyUserAdmin", "gary")
+
+// As this user, we are going to create our dev user
+
+use test
+
+db.createUser({user: "garyDev", pwd: "gary", roles: ["readWrite"]});
+
+use admin
+
+db.logout()
+
+// 3. dev (read/write data in Customers and Sales db)
+
+use test
+
+db.auth("garyDev", "gary")
+
+db.customers.insertOne({name: "Gary"});
+
+db.sales.insertOne({name: "Gary Sale"});
+
+db.logout()
+
+// Finally, switch back to dbAdmin to create an index
+
+use admin
+
+db.auth("garyDbAdmin", "gary")
+
+use test
+
+db.customers.createIndex({name: 1})
+
