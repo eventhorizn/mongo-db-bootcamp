@@ -1,0 +1,25 @@
+// Capped Collections
+// Limits the amount of data (documents)
+// Oldest data is auto deleted when new data comes in
+// Good for logs or caching service
+use performance;
+
+// default size limit to 4 bytes
+// max determines max documents
+// this is a shell only command
+db.createCollection("capped", {capped: true, size: 10000, max: 3});
+
+
+db.capped.insertOne({name: "Manu"});
+db.capped.insertOne({name: "Gary"});
+db.capped.insertOne({name: "Katie"});
+
+// So, now with a capped collection insertion order is the order find returns
+db.capped.find();
+
+// Doesn't give an error, just removes the oldest
+// Should be Manu
+db.capped.insertOne({name: "Maria"});
+
+// Now shows Maria inserted, Manu removed
+db.capped.find();
