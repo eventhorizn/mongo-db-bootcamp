@@ -1,0 +1,43 @@
+use blog;
+
+db.users.insertOne({_id: 1, name: "Max"});
+
+db.posts.insertMany(
+    [
+        {title: "First Post", userId: 1}, 
+        {title: "Second Post", userId: 1}
+    ]
+);
+
+
+// Groups all commands together
+const session = db.getMongo().startSession();
+
+session.startTransaction();
+
+const usersCol = session.getDatabase("blog").users;
+const postsCol = session.getDatabase("blog").posts;
+
+usersCol.deleteOne({_id: 1});
+db.users.find(); // still shows since session hasn't been committed
+
+postsCol.deleteMany({userId: 1});
+db.posts.find(); // still shows
+
+// Commits transaction
+session.commitTransaction();
+db.users.find();
+db.posts.find();
+
+// You man run into issues if you run commands b/t transaction commands...so
+const session = db.getMongo().startSession();
+
+session.startTransaction();
+
+const usersCol = session.getDatabase("blog").users;
+const postsCol = session.getDatabase("blog").posts;
+
+usersCol.deleteOne({_id: 1});
+postsCol.deleteMany({userId: 1});
+
+session.commitTransaction();
