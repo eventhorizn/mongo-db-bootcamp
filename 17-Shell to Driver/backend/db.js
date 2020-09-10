@@ -1,7 +1,8 @@
 const mongodb = require('mongodb');
 const { call } = require('body-parser');
 const MongoClient = mongodb.MongoClient;
-const mongoDbUrl = 'mongodb+srv://garyRW:gary@testcluster.ntaj6.azure.mongodb.net/shop?retryWrites=true&w=majority';
+// Update this before running!
+const mongoDbUrl = 'mongodb+srv://user:pwd@testcluster.ntaj6.azure.mongodb.net/shop?retryWrites=true&w=majority';
 
 let _db;
 
